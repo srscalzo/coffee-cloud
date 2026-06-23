@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import GitHub from 'next-auth/providers/github'
+import Google from 'next-auth/providers/google'
 import { db } from '@/lib/db'
 
 declare module 'next-auth' {
@@ -8,7 +8,6 @@ declare module 'next-auth' {
       id: string
       email: string
       name?: string | null
-      image?: string | null
     }
   }
 }
@@ -16,7 +15,7 @@ declare module 'next-auth' {
 const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS?.split(',').map((e) => e.trim()) ?? []
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [GitHub],
+  providers: [Google],
   callbacks: {
     async signIn({ user }) {
       if (!user.email) return false
@@ -27,12 +26,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         .values({
           email: user.email,
           name: user.name ?? null,
-          image: user.image ?? null,
         })
         .onConflict((oc) =>
           oc.column('email').doUpdateSet({
             name: user.name ?? null,
-            image: user.image ?? null,
           })
         )
         .execute()

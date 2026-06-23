@@ -4,7 +4,6 @@ export interface UserTable {
   id: Generated<string>
   email: string
   name: string | null
-  image: string | null
   created_at: Generated<Date>
 }
 
